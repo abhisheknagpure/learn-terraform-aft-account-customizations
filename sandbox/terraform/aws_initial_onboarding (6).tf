@@ -1,10 +1,4 @@
-terraform {
-required_providers {
-aws = {
-version = "~>5.87"
-}
-}
-}
+
 
 provider "aws" {
 alias = "alias_cns_onboarding"
