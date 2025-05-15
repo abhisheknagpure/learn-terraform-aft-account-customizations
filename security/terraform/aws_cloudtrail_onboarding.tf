@@ -273,7 +273,7 @@ CreateKMSPolicy = {
 "Fn::Not" = [
 {
 "Fn::Equals" = [
-"arn:aws:kms:us-east-1:429060775154:key/54ec11dc-05a4-4980-9e00-67b7a6ca0d74", ""
+"", ""
 ]
 }
 ]
@@ -292,7 +292,7 @@ HasPermissionsBoundary = {
 }
 IsBucketOwnerAccount = {
 "Fn::Equals" = [
-"429060775154", { "Ref" = "AWS::AccountId" }
+"688567271939", { "Ref" = "AWS::AccountId" }
 ]
 }
 IsNotBucketOwnerAccount = {
@@ -302,7 +302,7 @@ IsNotBucketOwnerAccount = {
 }
 SNSAccount = {
 "Fn::Equals" = [
-"429060775154", { "Ref" = "AWS::AccountId" }
+"207567775001", { "Ref" = "AWS::AccountId" }
 ]
 }
 CreateKMSPolicy = {
@@ -311,14 +311,14 @@ CreateKMSPolicy = {
 "Fn::Not": [
 {
 "Fn::Equals": [
-"arn:aws:kms:us-east-1:429060775154:key/54ec11dc-05a4-4980-9e00-67b7a6ca0d74", ""
+"", ""
 ]
 }
 ]
 },
 {
 "Fn::Equals": [
-"429060775154", { "Ref": "AWS::AccountId" }
+"688567271939", { "Ref": "AWS::AccountId" }
 ]
 }
 ]
@@ -340,7 +340,7 @@ Properties = {
 Endpoint = { "Fn::GetAtt" = ["MarketplaceCloudTrailLogsQueue", "Arn"] }
 Protocol = "sqs"
 RawMessageDelivery = false
-TopicArn = "arn:aws:sns:us-east-1:429060775154:aws-cloudtrail-validation-logs-429060775154-82244636"
+TopicArn = "arn:aws:sns:us-east-1:207567775001:aws-controltower-AllConfigNotifications"
 },
 Type = "AWS::SNS::Subscription"
 },
@@ -365,7 +365,7 @@ Statement = [
 Action = "sqs:SendMessage"
 Condition = {
 ArnEquals = {
-"aws:SourceArn" = "arn:aws:sns:us-east-1:429060775154:aws-cloudtrail-validation-logs-429060775154-82244636"
+"aws:SourceArn" = "arn:aws:sns:us-east-1:207567775001:aws-controltower-AllConfigNotifications"
 }
 }
 Effect = "Allow"
@@ -383,7 +383,7 @@ Action = [
 ]
 Effect = "Allow"
 Principal = {
-AWS = {"Fn::Sub" = "arn:${data.aws_partition.current.partition}:iam::429060775154:role${var.iam_path}singularity-aws-app-${var.identifier}"}
+AWS = {"Fn::Sub" = "arn:${data.aws_partition.current.partition}:iam::688567271939:role${var.iam_path}singularity-aws-app-${var.identifier}"}
 }
 Resource = { "Fn::GetAtt" = ["MarketplaceCloudTrailLogsQueue", "Arn"] }
 Sid = "Allow-SentinelOneMarketplaceAccess-RecvDeleteMsg"
@@ -408,7 +408,7 @@ Statement = [
 {
 Action = ["kms:Decrypt"]
 Effect = "Allow"
-Resource = "arn:aws:kms:us-east-1:429060775154:key/54ec11dc-05a4-4980-9e00-67b7a6ca0d74"
+Resource = ""
 Sid = "AllowCNSToDecryptCloudtrailKMS"
 }
 ],
@@ -470,7 +470,7 @@ Effect = "Allow",
 Resource = {
 "Fn::Join" = [
 "",
-["arn:${data.aws_partition.current.partition}:s3:::", "aws-cloudtrail-validation-logs-429060775154-78f3c786"]
+["arn:${data.aws_partition.current.partition}:s3:::", "aws-controltower-logs-688567271939-us-east-1"]
 ]
 },
 Sid = "AllowSentinelOneCNSAccessCloudTrailS3ListGetLocation"
@@ -484,7 +484,7 @@ Effect = "Allow",
 Resource = {
 "Fn::Join" = [
 "",
-["arn:${data.aws_partition.current.partition}:s3:::", "aws-cloudtrail-validation-logs-429060775154-78f3c786", "/*"]
+["arn:${data.aws_partition.current.partition}:s3:::", "aws-controltower-logs-688567271939-us-east-1", "/*"]
 ]
 },
 Sid = "AllowSentinelOneCNSAccessCloudTrailS3GetObject"
@@ -562,5 +562,5 @@ output "marketplace_cloudtrail_logs_queue" {
 
 output "sentinelone_marketplace_access_role_arn" {
  description = "The ARN of the Marketplace role."
- value = "arn:${data.aws_partition.current.partition}:iam::429060775154:role${var.iam_path}singularity-aws-app-${var.identifier}"
+ value = "arn:${data.aws_partition.current.partition}:iam::688567271939:role${var.iam_path}singularity-aws-app-${var.identifier}"
 }

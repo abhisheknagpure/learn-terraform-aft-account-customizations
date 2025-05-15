@@ -41,17 +41,17 @@ variable "marketplace_external_id" {
 variable "cloudtrail_bucket_name" {
  description = "The name of the S3 bucket to store CloudTrail logs."
  type = string
- default = "aws-cloudtrail-validation-logs-429060775154-78f3c786"
+ default = "aws-controltower-logs-688567271939-us-east-1"
 }
 variable "cloudtrail_kms_arn" {
  description = "The ARN of the KMS key attached to the CloudTrail."
  type = string
- default = "arn:aws:kms:us-east-1:429060775154:key/54ec11dc-05a4-4980-9e00-67b7a6ca0d74"
+ default = ""
 }
 variable "bucket_owner_account_id" {
  description = "The AWS account ID of the bucket owner."
  type = string
- default = "429060775154"
+ default = "688567271939"
 }
 variable "is_organization_onboarding" {
  description = "Is the organization onboarding."
@@ -61,15 +61,15 @@ variable "is_organization_onboarding" {
 variable "existing_sns_topic_arn" {
  description = "The ARN of the existing SNS topic."
  type = string
- default = "arn:aws:sns:us-east-1:429060775154:aws-cloudtrail-validation-logs-429060775154-82244636"
+ default = "arn:aws:sns:us-east-1:207567775001:aws-controltower-AllConfigNotifications"
 }
 variable "existing_sns_topic_account_id" {
  description = "The AWS account ID of the existing SNS topic."
  type = string
- default = "429060775154"
+ default = "207567775001"
 }
 variable "audit_role_for_bucket_access" {
  description = "The ARN of the IAM role attach the policy to"
  type = string
- default = "arn:aws:iam::429060775154:role/s1-cns-audit-2215028619070184314"
+ default = "arn:aws:iam::688567271939:role/s1-cns-audit-2215028619070184314"
 }
