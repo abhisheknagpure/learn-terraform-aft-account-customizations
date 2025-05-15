@@ -41,7 +41,6 @@
 
 
 
-
 resource "aws_iam_role" "sentinelone_marketplace_access_role" {
  count = local.is_bucket_owner_account ? 1 : 0
  name = "singularity-aws-app-${var.identifier}"
@@ -112,7 +111,7 @@ resource "aws_iam_policy_attachment" "sentinelone_cns_allow_cloudtrail_bucket_ac
  name = "SentinelOneCNSAllowCloudTrailBucketAccessPolicyAttachment"
  roles = [
  var.audit_role_name,
- "singularity-aws-app-2199176901866569658"
+ "singularity-aws-app-2215028619070184314"
  ]
  policy_arn = aws_iam_policy.sentinelone_cns_allow_cloudtrail_bucket_access_policy[0].arn
 }
@@ -148,7 +147,7 @@ resource "aws_iam_policy_attachment" "sentinelone_cns_allow_cloudtrail_queue_acc
 count = local.is_bucket_owner_account ? 1 : 0
 name = "SentinelOneCNSAllowCloudTrailQueueAccessPolicyAttachment"
 roles = [
-"singularity-aws-app-2199176901866569658"
+"singularity-aws-app-2215028619070184314"
 ]
 policy_arn = aws_iam_policy.sentinelone_cns_allow_cloudtrail_queue_access_policy[0].arn
 }
@@ -176,7 +175,7 @@ resource "aws_iam_policy_attachment" "sentinelone_cns_allow_kms_decrypt_policy_a
  count = local.create_kms_policy ? 1 : 0
  name = "SentinelOneCNSAllowKMSDecryptPolicyAttachment"
  roles = [
- "singularity-aws-app-2199176901866569658"
+ "singularity-aws-app-2215028619070184314"
  ]
  policy_arn = aws_iam_policy.sentinelone_cns_allow_kms_decrypt_policy[0].arn
 }
@@ -274,7 +273,7 @@ CreateKMSPolicy = {
 "Fn::Not" = [
 {
 "Fn::Equals" = [
-"", ""
+"arn:aws:kms:us-east-1:429060775154:key/54ec11dc-05a4-4980-9e00-67b7a6ca0d74", ""
 ]
 }
 ]
@@ -293,7 +292,7 @@ HasPermissionsBoundary = {
 }
 IsBucketOwnerAccount = {
 "Fn::Equals" = [
-"688567271939", { "Ref" = "AWS::AccountId" }
+"429060775154", { "Ref" = "AWS::AccountId" }
 ]
 }
 IsNotBucketOwnerAccount = {
@@ -303,7 +302,7 @@ IsNotBucketOwnerAccount = {
 }
 SNSAccount = {
 "Fn::Equals" = [
-"207567775001", { "Ref" = "AWS::AccountId" }
+"429060775154", { "Ref" = "AWS::AccountId" }
 ]
 }
 CreateKMSPolicy = {
@@ -312,14 +311,14 @@ CreateKMSPolicy = {
 "Fn::Not": [
 {
 "Fn::Equals": [
-"", ""
+"arn:aws:kms:us-east-1:429060775154:key/54ec11dc-05a4-4980-9e00-67b7a6ca0d74", ""
 ]
 }
 ]
 },
 {
 "Fn::Equals": [
-"688567271939", { "Ref": "AWS::AccountId" }
+"429060775154", { "Ref": "AWS::AccountId" }
 ]
 }
 ]
@@ -341,7 +340,7 @@ Properties = {
 Endpoint = { "Fn::GetAtt" = ["MarketplaceCloudTrailLogsQueue", "Arn"] }
 Protocol = "sqs"
 RawMessageDelivery = false
-TopicArn = "arn:aws:sns:us-east-1:207567775001:aws-controltower-AllConfigNotifications"
+TopicArn = "arn:aws:sns:us-east-1:429060775154:aws-cloudtrail-validation-logs-429060775154-82244636"
 },
 Type = "AWS::SNS::Subscription"
 },
@@ -366,7 +365,7 @@ Statement = [
 Action = "sqs:SendMessage"
 Condition = {
 ArnEquals = {
-"aws:SourceArn" = "arn:aws:sns:us-east-1:207567775001:aws-controltower-AllConfigNotifications"
+"aws:SourceArn" = "arn:aws:sns:us-east-1:429060775154:aws-cloudtrail-validation-logs-429060775154-82244636"
 }
 }
 Effect = "Allow"
@@ -384,7 +383,7 @@ Action = [
 ]
 Effect = "Allow"
 Principal = {
-AWS = {"Fn::Sub" = "arn:${data.aws_partition.current.partition}:iam::688567271939:role${var.iam_path}singularity-aws-app-${var.identifier}"}
+AWS = {"Fn::Sub" = "arn:${data.aws_partition.current.partition}:iam::429060775154:role${var.iam_path}singularity-aws-app-${var.identifier}"}
 }
 Resource = { "Fn::GetAtt" = ["MarketplaceCloudTrailLogsQueue", "Arn"] }
 Sid = "Allow-SentinelOneMarketplaceAccess-RecvDeleteMsg"
@@ -409,7 +408,7 @@ Statement = [
 {
 Action = ["kms:Decrypt"]
 Effect = "Allow"
-Resource = ""
+Resource = "arn:aws:kms:us-east-1:429060775154:key/54ec11dc-05a4-4980-9e00-67b7a6ca0d74"
 Sid = "AllowCNSToDecryptCloudtrailKMS"
 }
 ],
@@ -422,32 +421,6 @@ Roles = [
 Type = "AWS::IAM::ManagedPolicy"
 }
 
-SentinelOneCNSLogsNotificationQueueSubscription = {
-Condition = "CreateSQS",
-Properties = {
-Endpoint = { "Fn::GetAtt" = ["SentinelOneCNSLogsQueue", "Arn"] },
-Protocol = "sqs",
-RawMessageDelivery = false,
-TopicArn = "arn:aws:sns:us-east-1:207567775001:aws-controltower-AllConfigNotifications"
-},
-Type = "AWS::SNS::Subscription"
-}
-
-SentinelOneCNSLogsQueue = {
-Condition = "CreateSQS",
-Properties = {
-QueueName = {
-"Fn::Join" = [
-"",
-[
-"s1-cns-cloudtrail-logs-queue-",
-{ "Ref" = "identifier" }
-]
-]
-}
-},
-Type = "AWS::SQS::Queue"
-},
 SentinelOneMarketplaceAccessRole = {
 Properties = {
 AssumeRolePolicyDocument = {
@@ -497,7 +470,7 @@ Effect = "Allow",
 Resource = {
 "Fn::Join" = [
 "",
-["arn:${data.aws_partition.current.partition}:s3:::", "aws-controltower-logs-688567271939-us-east-1"]
+["arn:${data.aws_partition.current.partition}:s3:::", "aws-cloudtrail-validation-logs-429060775154-78f3c786"]
 ]
 },
 Sid = "AllowSentinelOneCNSAccessCloudTrailS3ListGetLocation"
@@ -511,7 +484,7 @@ Effect = "Allow",
 Resource = {
 "Fn::Join" = [
 "",
-["arn:${data.aws_partition.current.partition}:s3:::", "aws-controltower-logs-688567271939-us-east-1", "/*"]
+["arn:${data.aws_partition.current.partition}:s3:::", "aws-cloudtrail-validation-logs-429060775154-78f3c786", "/*"]
 ]
 },
 Sid = "AllowSentinelOneCNSAccessCloudTrailS3GetObject"
@@ -519,7 +492,7 @@ Sid = "AllowSentinelOneCNSAccessCloudTrailS3GetObject"
 ]
 },
 Roles = [
-"singularity-aws-app-2199176901866569658"
+"singularity-aws-app-2215028619070184314"
 ]
 },
 Type = "AWS::IAM::ManagedPolicy"
@@ -529,7 +502,7 @@ SentinelOneCNSAllowCloudTrailQueueAccessPolicyWithMarketPlace = {
 Condition = "IsBucketOwnerAccount",
 DependsOn = "SentinelOneMarketplaceAccessRole",
 Properties = {
-Description = "Allow SentinelOne CNS access to cloudtrail bucket",
+Description = "Allow SentinelOne CNS access to cloudtrail queue",
 Path = { "Ref" = "iamPath" },
 PolicyDocument = {
 Version = "2012-10-17",
@@ -546,7 +519,7 @@ Sid = "AllowSentinelOneCNSAccessCloudTrailS3ListGetLocation"
 ]
 },
 Roles = [
-"singularity-aws-app-2199176901866569658"
+"singularity-aws-app-2215028619070184314"
 ]
 },
 Type = "AWS::IAM::ManagedPolicy"
@@ -559,7 +532,7 @@ Type = "AWS::IAM::ManagedPolicy"
 resource "aws_cloudformation_stack_set_instance" "stack_instances_group" {
 count = local.is_organization_onboarding ? 1 : 0
 deployment_targets {
-organizational_unit_ids = [data.aws_organizations_organization.roots.roots[0].id]
+organizational_unit_ids = [data.aws_organizations_organization.roots[0].roots[0].id]
 }
 operation_preferences {
 failure_tolerance_count = 24
@@ -589,5 +562,5 @@ output "marketplace_cloudtrail_logs_queue" {
 
 output "sentinelone_marketplace_access_role_arn" {
  description = "The ARN of the Marketplace role."
- value = "arn:${data.aws_partition.current.partition}:iam::688567271939:role${var.iam_path}singularity-aws-app-${var.identifier}"
+ value = "arn:${data.aws_partition.current.partition}:iam::429060775154:role${var.iam_path}singularity-aws-app-${var.identifier}"
 }
